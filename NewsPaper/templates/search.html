@@ -1,0 +1,89 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_tegs %}
+
+
+
+{% block title %}
+Newses
+{% endblock title %}
+
+{% block content %}
+
+    <p>&nbsp;</p>
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+
+         <p style="text-align: left;">Сегодня {{ time_now|date:'M d Y' }}</p>
+   </form>
+
+     <hr>
+        {% if newses %}
+        <table>
+            <tr>
+                <th>Название&nbsp;</th>
+                <th>&nbsp;Дата</th>
+                <th>Тип новости</th>
+                <th>&nbsp;Краткое содердание&nbsp;</th>
+                <th>&nbsp;Автор&nbsp;</th>
+                <th>&nbsp;Рейтинг&nbsp;</th>
+            </tr>
+
+           <!-- Для каждого товара будете генерироваться новая строчка,
+           т.е. новый HTML код, который указан в теле цикла.
+           При этом сам цикл работает точно так же, как и в Python.
+           product — переменная цикла, т.е. наш товар полученный из списка -->
+            {% for news in newses %}
+
+            <tr>
+            <td>{{ news.title}}</td>
+
+                <td>{{ news.dateCreation|date:'M d Y' }}</td>
+                {% if news.categoryType == 'NW' %}
+                <td>{{ 'Новость' }}</td>
+                {% else %}
+                <td>{{ 'Статья' }}</td>
+                {% endif %}
+                <td>{{ news.text|truncatechars:20 }}</td>
+                <td>{{ news.author.authorUser.username }}</td>
+                <td>{{ news.rating }}</td>
+             {% if news.postAuthor == request.user.author %}
+                    <td><a href="{{ news.get_delete_url }}"><span style="color: #ff0000;">DELETE</span></a></td>
+                {% endif %}
+                <td><p>&nbsp;</p></td>
+
+                {% if news.postAuthor == request.user.author %}
+                    <td><a href="{{ news.post_update_url }}">EDIT</a></td>
+                {% endif %}
+            </tr>
+
+            {% endfor %}
+
+        </table>
+    {% else %}
+       <h2>Новостей нет!</h2>
+    {% endif %}
+    {# Добавляем пагинацию на страницу #}
+
+        {% if page_obj.has_previous %}
+        {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+            <a href="?{% url_replace page=1 %}">1</a>
+            {% if page_obj.previous_page_number != 1 %}
+               ...
+                <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+            {% endif %}
+        {% endif %}
+
+        {{ page_obj.number }}
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+            {% if paginator.num_pages != page_obj.next_page_number %}
+               ...
+                <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+            {% endif %}
+        {% endif %}
+
+{% endblock content %}

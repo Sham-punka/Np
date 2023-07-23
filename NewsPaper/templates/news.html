@@ -1,0 +1,16 @@
+                                                                            {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% block title %}
+author
+{% endblock title %}
+
+{% block content %}
+<h1>{{ news.title }}</h1>
+<p>&nbsp;</p>
+<h2>{{ news.text|censor }}</h2>
+<p style="text-align: left;">{{ news.postAuthor.authorUser.username }}  &#128077;{{ news.postAuthor.rating }}</p>
+
+<p style="text-align: right;">{{ news.date_creation }}</p>
+<p style="text-align: right;">&#128150;{{ news.rating }}&nbsp;&nbsp;&nbsp;</p>
+
+{% endblock content %}
