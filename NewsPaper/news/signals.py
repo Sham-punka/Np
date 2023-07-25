@@ -38,4 +38,4 @@ def post_created(sender, instance, **kwargs):
             subscribers_emails += [subs.user.email for subs in subscribers]
             print(subscribers_emails)
 
-        send_msg(instance.previw(), instance.pk, instance.title, subscribers)
+        send_msg(instance.previw(), instance.pk, instance.title, subscribers_emails)

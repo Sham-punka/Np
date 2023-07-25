@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from .forms import PostForm
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 
 class NewsList(ListView):
     model = Post
@@ -143,3 +143,40 @@ def subscriptions(request):
         {'categories': categories_with_subscriptions},
     )
 
+class Category_List_View(ListView):
+    model = Post
+    template_name = 'category_news.html'
+    context_object_name = 'category_news'
+    # ordering = ['-date_creation']
+    paginate_by = 10
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(postCategory=self.category).order_by('-dateCreation')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # user = self.request.user
+        # subscrib = self.category.subscribers.filter(email=user.email)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+@login_required
+@csrf_protect
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+    message = 'Вы успешно подписались на рассылку новостей в категории '
+
+    return render(request, 'subscriptions.html', {'category': category, 'message': message})
+
+@login_required
+def unsubscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    if category.subscribers.filter(id=user.id).exists():
+        category.subscribers.remove(user)
+    return redirect('news_search')

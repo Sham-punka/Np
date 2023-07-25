@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
-
+    "django_apscheduler",
 ]
 
 SITE_ID = 1
@@ -157,14 +157,14 @@ ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "SkillFactoryTesting"
-EMAIL_HOST_PASSWORD = "boaqesftdeitnnbo"
+EMAIL_HOST_USER = "ivan.busalaev"
+EMAIL_HOST_PASSWORD = "fcqydgycadmbndif"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-DEFAULT_FROM_EMAIL = "SkillFactoryTesting@yandex.ru"
+DEFAULT_FROM_EMAIL = "ivan.busalaev@yandex.ru"
 
-SERVER_EMAIL = "SkillFactoryTesting@yandex.ru"
+SERVER_EMAIL = "ivan.busalaev@yandex.ru"
 
 MANAGERS = (
     ('иван', 'ivan.busalaev@yandex.ru'),

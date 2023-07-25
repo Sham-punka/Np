@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 def my_job():
     today = datetime.datetime.now()
     last_week = today - datetime.timedelta(days=7)
-    posts = Post.objects.filter(date_creation__gte=last_week)
-    categories = set(posts.values_list('postCategory__category', flat=True))
-    subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))
+    posts = Post.objects.filter(dateCreation__gte=last_week)
+    categories = set(posts.values_list('category__name', flat=True))
+    subscribers = set(Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
     html = render_to_string(
         'daily_post.html',
         {
@@ -33,7 +33,7 @@ def my_job():
     msg = EmailMultiAlternatives(
         subject='Статьи за неделю',
         body='',
-        from_email='test@yandex.ru',
+        from_email='SkillFactoryTesting@yandex.ru',
         to=subscribers
     )
 
@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(day_of_week="fri", hour="13", minute="50"),
+            trigger=CronTrigger(second="*/30"),
             id="my_job",  # The `id` assigned to each job MUST be unique
             max_instances=1,
             replace_existing=True,
